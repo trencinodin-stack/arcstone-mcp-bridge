@@ -138,29 +138,18 @@ def build_server(profile_path: Path) -> FastMCP:
     def run_synthetic_conformance_audit() -> str:
         """Step-by-step evaluator workflow for verifying PINS.lock and adversarial CAS edge cases."""
         crate = profile["upstream_kernel"]["crate"]
-        return (
-            f"Run a synthetic conformance audit for {profile['display_name']} ({profile['profile_id']}):
-"
-            f"1. Inspect `arcstone://kernel/attestation` and clone `{crate}` (`{profile['upstream_kernel']['version']}`).
-"
-            f"2. Call `verify_kernel_integrity` on the cloned repository path to confirm `cargo test --locked` passes.
-"
-            f"3. Call `simulate_permit_lifecycle` with a sample payload, a mutated retry payload, and `simulate_timeout=True` "
-            f"to verify `DISPATCH_RESERVED -> UNKNOWN_RECONCILE -> LOCKED_MANUAL` fail-closed isolation."
-        )
+        return f"""Run a synthetic conformance audit for {profile['display_name']} ({profile['profile_id']}):
+1. Inspect `arcstone://kernel/attestation` and clone `{crate}` (`{profile['upstream_kernel']['version']}`).
+2. Call `verify_kernel_integrity` on the cloned repository path to confirm `cargo test --locked` passes.
+3. Call `simulate_permit_lifecycle` with a sample payload, a mutated retry payload, and `simulate_timeout=True` to verify `DISPATCH_RESERVED -> UNKNOWN_RECONCILE -> LOCKED_MANUAL` fail-closed isolation."""
 
     @mcp.prompt(name="map-downstream-integration")
     def map_downstream_integration() -> str:
         """Walk institutional platform engineers through wiring OpID minting and CAS around the 96B permit."""
-        return (
-            f"Map downstream integration for {profile['display_name']}:
-"
-            f"1. Read `arcstone://profile/wire-map` to identify volatile retry fields to strip prior to `H_admitted` hashing.
-"
-            f"2. Call `audit_tc_boundary` with the institution's proposed OpID minter, CAS store, and HSM/KMS topology.
-"
-            f"3. Call `generate_validation_memo` for the target rail to produce an ARB/ORM sign-off package."
-        )
+        return f"""Map downstream integration for {profile['display_name']}:
+1. Read `arcstone://profile/wire-map` to identify volatile retry fields to strip prior to `H_admitted` hashing.
+2. Call `audit_tc_boundary` with the institution's proposed OpID minter, CAS store, and HSM/KMS topology.
+3. Call `generate_validation_memo` for the target rail to produce an ARB/ORM sign-off package."""
 
     return mcp
 
