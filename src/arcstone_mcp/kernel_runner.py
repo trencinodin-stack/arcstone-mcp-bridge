@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import hashlib
-import json
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -178,8 +177,7 @@ def generate_validation_memo(
     """Generate a ready-to-file internal ARB / ORM validation memo."""
     reg = profile.get("regulatory_framework", {})
     kernel = profile.get("upstream_kernel", {})
-    guidance = "
-".join(f"- {g}" for g in reg.get("primary_guidance", []))
+    guidance = chr(10).join(f"- {g}" for g in reg.get("primary_guidance", []))
     return f"""# INTERNAL ARCHITECTURE REVIEW BOARD (ARB) & ORM VALIDATION MEMORANDUM
 
 **Subject:** Deterministic Execution Boundary Conformance Assessment — `{target_rail_or_protocol}`  
