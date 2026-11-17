@@ -29,10 +29,13 @@ class TestArcstoneMcpBridge(unittest.TestCase):
                 profile = yaml.safe_load((ROOT / "profiles" / filename).read_text(encoding="utf-8"))
                 self.assertEqual(profile["upstream_kernel"]["master_anchor"], MASTER_ANCHOR)
 
+                volatile_key = profile["domain_vocabulary"]["volatile_retry_fields"][0]
+
+                # 1. Verify idempotent replay suppression when only volatile transport field rotates
                 receipt = kernel_runner.simulate_permit_lifecycle(
                     profile=profile,
-                    intent_payload={"amount": 1000, "MsgId": "MSG-1"},
-                    retry_payload={"amount": 1000, "MsgId": "MSG-2"},
+                    intent_payload={"amount": 1000, volatile_key: "ID-1"},
+                    retry_payload={"amount": 1000, volatile_key: "ID-2"},
                     simulate_timeout=True,
                 )
                 self.assertEqual(receipt["status"], "PASS")
@@ -46,6 +49,23 @@ class TestArcstoneMcpBridge(unittest.TestCase):
                         "IDEMPOTENT_REPLAY_SUPPRESSED",
                         "UNKNOWN_RECONCILE",
                         "LOCKED_MANUAL",
+                    ],
+                )
+
+                # 2. Verify regeneration drift is blocked when canonical business payload mutates
+                drift_receipt = kernel_runner.simulate_permit_lifecycle(
+                    profile=profile,
+                    intent_payload={"amount": 1000, volatile_key: "ID-1"},
+                    retry_payload={"amount": 2500, volatile_key: "ID-2"},
+                    simulate_timeout=False,
+                )
+                drift_states = [t["state"] for t in drift_receipt["details"]["cas_transitions"]]
+                self.assertEqual(
+                    drift_states,
+                    [
+                        "DISPATCH_RESERVED",
+                        "REGENERATION_DRIFT_BLOCKED",
+                        "SETTLED_COMMITTED",
                     ],
                 )
 
