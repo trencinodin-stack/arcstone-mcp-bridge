@@ -1,0 +1,30 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "name": "io.github.trencinodin-stack/arcstone-mcp-bridge",
+  "title": "Arcstone Multi-Domain MCP Bridge",
+  "description": "Universal read-only conformance, sandbox-simulation, and institutional diligence MCP server for the Arcstone Computational Spine (ARC-SPEC-2026-MCP-01 | A-77-DELTA-SHIELD-LOCKED).",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/trencinodin-stack/arcstone-mcp-bridge",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "arcstone-mcp-bridge",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "packageArguments": [
+        {
+          "type": "named",
+          "name": "--profile",
+          "description": "Path to declarative Domain Profile Pack YAML (banking_treasury.yaml, energy_grid.yaml, or clinical_actuation.yaml)",
+          "isRequired": false,
+          "default": "profiles/banking_treasury.yaml"
+        }
+      ]
+    }
+  ]
+}
