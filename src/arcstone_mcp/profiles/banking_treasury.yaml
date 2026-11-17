@@ -1,0 +1,26 @@
+profile_id: "arcstone-banking-treasury-v1"
+display_name: "MCP-Banking (ISO 20022 & Institutional Treasury Conformance)"
+upstream_kernel:
+  crate: "arcstone-treasury-bind"
+  version: "v0.1.0"
+  spec_doi: "10.5281/zenodo.24119501"
+  projection_spec: null
+  master_anchor: "A-77-DELTA-SHIELD-LOCKED"
+
+domain_vocabulary:
+  intent_unit: "Payment / Liquidity Transfer Instruction"
+  wire_formats: ["ISO 20022 pacs.008", "pacs.002", "camt.054"]
+  volatile_retry_fields: ["MsgId", "EndToEndId", "UETR", "CreDtTm"]
+  downstream_rails: ["FedNow", "TCH RTP", "CHIPS", "SWIFT"]
+
+regulatory_framework:
+  primary_guidance:
+    - "Federal Reserve SR 26-2 (Sec II & Fn 3)"
+    - "OCC Bulletin 2026-13"
+    - "FDIC FIL-15-2026"
+  control_classification: "Preventive ORM Control & ITGC Change-Management Gate"
+  excluded_from_mrm_model_def: true
+
+commercial_boundary:
+  open_evaluation: "MIT/Apache-2.0 reference predicate, Coq 8.18.0 proofs, 11-point adversarial corpus"
+  enterprise_license_scope: "Production runtime profiles, HSM/KMS key custody, durable CAS persistence, certified rail adapters"

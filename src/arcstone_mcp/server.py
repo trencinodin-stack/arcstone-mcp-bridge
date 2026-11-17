@@ -15,8 +15,25 @@ from . import kernel_runner
 from .receipt_signer import MASTER_ANCHOR, SPEC_ID
 
 
+def _package_dir() -> Path:
+    return Path(__file__).resolve().parent
+
+
 def _default_root() -> Path:
     return Path(__file__).resolve().parents[2]
+
+
+def _resolve_profile_path(raw: str | Path) -> Path:
+    candidate = Path(raw).expanduser()
+    if candidate.is_file():
+        return candidate.resolve()
+    bundled_by_name = _package_dir() / "profiles" / candidate.name
+    if bundled_by_name.is_file():
+        return bundled_by_name.resolve()
+    repo_relative = _default_root() / candidate
+    if repo_relative.is_file():
+        return repo_relative.resolve()
+    raise FileNotFoundError(f"Domain Profile Pack not found: {raw}")
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -28,15 +45,16 @@ def _load_yaml(path: Path) -> dict[str, Any]:
 
 
 def _load_pins(root: Path) -> dict[str, Any]:
-    pins_path = root / "PINS.lock"
-    if pins_path.exists():
-        return json.loads(pins_path.read_text(encoding="utf-8"))
+    for pins_path in (root / "PINS.lock", _package_dir() / "PINS.lock"):
+        if pins_path.exists():
+            return json.loads(pins_path.read_text(encoding="utf-8"))
     return {"spec_id": SPEC_ID, "master_anchor": MASTER_ANCHOR, "upstream_kernels": {}}
 
 
-def build_server(profile_path: Path) -> FastMCP:
+def build_server(profile_path: Path | str) -> FastMCP:
     root = _default_root()
-    profile = _load_yaml(profile_path)
+    resolved_profile = _resolve_profile_path(profile_path)
+    profile = _load_yaml(resolved_profile)
     pins = _load_pins(root)
 
     mcp = FastMCP(
@@ -158,16 +176,16 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Arcstone Multi-Domain MCP Bridge")
     default_profile = os.environ.get(
         "ARCSTONE_MCP_PROFILE",
-        str(_default_root() / "profiles" / "banking_treasury.yaml"),
+        "banking_treasury.yaml",
     )
     parser.add_argument(
         "--profile",
-        type=Path,
-        default=Path(default_profile),
-        help="Path to declarative Domain Profile Pack YAML",
+        type=str,
+        default=default_profile,
+        help="Path or bundled name of Domain Profile Pack YAML (default: banking_treasury.yaml)",
     )
     args = parser.parse_args()
-    server = build_server(args.profile.expanduser().resolve())
+    server = build_server(args.profile)
     server.run()
 
 

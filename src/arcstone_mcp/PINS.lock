@@ -1,0 +1,28 @@
+{
+  "spec_id": "ARC-SPEC-2026-MCP-01-REV00",
+  "master_anchor": "A-77-DELTA-SHIELD-LOCKED",
+  "operational_drag": "C_ops = 0",
+  "upstream_kernels": {
+    "arcstone-treasury-bind": {
+      "version": "v0.1.0",
+      "spec_id": "ARC-SPEC-2026-BIND-01-REV11",
+      "zenodo_doi": "10.5281/zenodo.24119501",
+      "repo": "https://github.com/trencinodin-stack/arcstone-treasury-bind"
+    },
+    "domain-projection-spec": {
+      "version": "v0.1.0",
+      "spec_id": "ARC-SPEC-2026-DPP-01",
+      "zenodo_doi": "10.5281/zenodo.24041851",
+      "governance": [
+        "ADR-008",
+        "ADR-009"
+      ],
+      "repo": "https://github.com/trencinodin-stack/domain-projection-spec"
+    },
+    "arcstone-continuity-core": {
+      "version": "v1.3.1-exec",
+      "zenodo_doi": "10.5281/zenodo.22966979",
+      "repo": "https://github.com/trencinodin-stack/arcstone-continuity-core"
+    }
+  }
+}
