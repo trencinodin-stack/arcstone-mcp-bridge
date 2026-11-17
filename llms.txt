@@ -1,0 +1,28 @@
+# arcstone-mcp-bridge
+
+> Universal read-only conformance, sandbox-simulation, and institutional diligence Model Context Protocol (MCP) shell for the Arcstone Computational Spine (`ARC-SPEC-2026-MCP-01 (REV-00)` | Master Anchor: `A-77-DELTA-SHIELD-LOCKED` | `C_ops = 0`).
+
+## Core Invariants & Posture
+- **Status:** `FROZEN / PHASE 2 READY (C_ops = 0)`
+- **Upstream Anchor:** `A-77-DELTA-SHIELD-LOCKED`
+- **Memory & Safety Clamps:** `M_alloc = 0 B`, `S_max <= 4096 B`, `D(a) = DENY => Delta_external(a) = 0`
+- **Architectural Role:** Offline/sandbox evaluation and compliance mapping shell driven by swappable declarative YAML Domain Profile Packs. Distinct from `arcstone-mcp-sidecar` (`v0.1.0-canonical`), which gates live runtime MCP tool invocations.
+
+## Repository Structure
+- [README.md](README.md): Quickstart commands, architectural isolation guarantees, and MCP primitive reference.
+- [AGENTS.md](AGENTS.md): Autonomous agent navigation rules, boundary constraints, and evaluator execution workflow.
+- [PINS.lock](PINS.lock): Pinned upstream crate versions, specification IDs, and Zenodo DOIs.
+- [pyproject.toml](pyproject.toml): Minimal Python package manifest (`mcp>=1.2.0`, `pyyaml>=6.0.1`).
+- [profiles/banking_treasury.yaml](profiles/banking_treasury.yaml): MCP-Banking profile (ISO 20022, FedNow/RTP/CHIPS/SWIFT, Federal Reserve SR 26-2, OCC Bulletin 2026-13).
+- [profiles/energy_grid.yaml](profiles/energy_grid.yaml): MCP-Grid profile (DNP3 / IEC 61850, NERC CIP, `ARC-SPEC-2026-DPP-01`).
+- [profiles/clinical_actuation.yaml](profiles/clinical_actuation.yaml): MCP-Clinical profile (HL7 FHIR / DICOM, FDA PCCP, `ARC-SPEC-2026-DPP-01`).
+- [src/arcstone_mcp/server.py](src/arcstone_mcp/server.py): Universal FastMCP server exposing 4 Resources, 4 Tools, and 2 Prompts.
+- [src/arcstone_mcp/kernel_runner.py](src/arcstone_mcp/kernel_runner.py): Subprocess `cargo test --locked` runner, 96-byte `ExecutionPermit` simulator, TCB auditor, and ARB/ORM memo generator.
+- [src/arcstone_mcp/receipt_signer.py](src/arcstone_mcp/receipt_signer.py): Deterministic canonical SHA-256 JSON conformance receipt generator.
+
+## Upstream Canonical Anchors
+- Field Root: https://admissibilityscience.com/
+- Domain Projection Paradigm: https://paradigm.admissibilityscience.com/
+- Institutional Treasury Binding (`ARC-SPEC-2026-BIND-01-REV11`): https://doi.org/10.5281/zenodo.24119501
+- Phase 8 Domain Projection (`ARC-SPEC-2026-DPP-01`): https://doi.org/10.5281/zenodo.24041851
+- Capstone Reference Specification (`ARC-CAPSTONE-2026-SYNTH-01-REV19`): https://doi.org/10.5281/zenodo.24093739
