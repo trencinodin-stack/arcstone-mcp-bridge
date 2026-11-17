@@ -1,0 +1,25 @@
+profile_id: "arcstone-clinical-actuation-v1"
+display_name: "MCP-Clinical (HL7 FHIR / DICOM & FDA PCCP Conformance)"
+upstream_kernel:
+  crate: "domain-projection-spec"
+  version: "v0.1.0"
+  spec_doi: "10.5281/zenodo.24041851"
+  projection_spec: "ARC-SPEC-2026-DPP-01"
+  master_anchor: "A-77-DELTA-SHIELD-LOCKED"
+
+domain_vocabulary:
+  intent_unit: "Medication Order / Closed-Loop Infusion & Radiation Setpoint"
+  wire_formats: ["HL7 FHIR R4 MedicationRequest", "DICOM RT Plan"]
+  volatile_retry_fields: ["id", "meta.lastUpdated", "identifier.value", "authoredOn"]
+  downstream_rails: ["Smart Infusion Pump Gateway", "EHR Order Router", "Radiation Delivery Interlock"]
+
+regulatory_framework:
+  primary_guidance:
+    - "FDA Predetermined Change Control Plans (PCCP) for AI/ML-Enabled Device Software Functions"
+    - "IEC 62304 Medical Device Software Lifecycle (Class C Safety Interlock)"
+  control_classification: "Fail-Closed Physiological Dose & Rate Envelope Gate (D(a) = DENY => Delta_external(a) = 0)"
+  excluded_from_mrm_model_def: true
+
+commercial_boundary:
+  open_evaluation: "MIT/Apache-2.0 reference predicate, Coq 8.18.0 proofs, static 4096B envelope simulator"
+  enterprise_license_scope: "FDA 21 CFR Part 11 audit trail persistence, HSM signing, certified medical device bus adapters"
