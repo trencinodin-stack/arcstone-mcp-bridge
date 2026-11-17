@@ -28,24 +28,3 @@ arcstone-mcp-bridge --profile profiles/banking_treasury.yaml
 # 3. Or launch MCP-Grid / MCP-Clinical conformance servers
 arcstone-mcp-bridge --profile profiles/energy_grid.yaml
 arcstone-mcp-bridge --profile profiles/clinical_actuation.yaml
-```
-
----
-
-## Universal MCP Primitives
-
-### Resources (Read-Only Grounding)
-- `arcstone://profile/spec` — Canonical protocol specification, Zenodo DOI anchors, and formal invariants (`I1-I3`).
-- `arcstone://profile/wire-map` — Maps domain message schemas onto trusted gateway OpID extraction, out-of-band CAS (`H_admitted`), and the 96-byte `ExecutionPermit`.
-- `arcstone://profile/regulatory-matrix` — Structured compliance mapping (Federal Reserve SR 26-2 / OCC Bulletin 2026-13, NERC CIP, FDA PCCP).
-- `arcstone://kernel/attestation` — Live verification receipt derived from `PINS.lock`, Zenodo DOIs, and Coq `8.18.0` status.
-
-### Tools (Deterministic Sandbox Execution)
-- `simulate_permit_lifecycle(intent_payload, retry_payload, simulate_timeout)` — Executes two-attempt regeneration and timeout simulation, returning 96-byte `ExecutionPermit` fields, POSIX dominance codes (`POSIX 0` vs `POSIX 32`), and 7-state CAS transitions (`DISPATCH_RESERVED -> UNKNOWN_RECONCILE -> LOCKED_MANUAL`).
-- `verify_kernel_integrity(repo_path)` — Runs `cargo test --locked` and validates source digests against `PINS.lock` and `A-77-DELTA-SHIELD-LOCKED`.
-- `audit_tc_boundary(downstream_stack_config)` — Separates Coq-verified kernel guarantees from customer-owned Trusted Computing Base (TCB) responsibilities.
-- `generate_validation_memo(target_rail_or_protocol)` — Generates an internal Architecture Review Board (ARB) or Operational Risk Management (ORM) validation memo.
-
-### Prompts (Turnkey Evaluator Workflows)
-- `run-synthetic-conformance-audit`
-- `map-downstream-integration`
