@@ -9,16 +9,20 @@
 - **Architectural Role:** Offline/sandbox evaluation and compliance mapping shell driven by swappable declarative YAML Domain Profile Packs. Distinct from `arcstone-mcp-sidecar` (`v0.1.0-canonical`), which gates live runtime MCP tool invocations.
 
 ## Repository Structure
-- [README.md](README.md): Quickstart commands, architectural isolation guarantees, and MCP primitive reference.
+- [README.md](README.md): Quickstart commands, client `mcpServers` configuration, architectural isolation guarantees, and MCP primitive reference.
 - [AGENTS.md](AGENTS.md): Autonomous agent navigation rules, boundary constraints, and evaluator execution workflow.
+- [server.json](server.json): Official Model Context Protocol Registry metadata manifest (`stdio` transport).
 - [PINS.lock](PINS.lock): Pinned upstream crate versions, specification IDs, and Zenodo DOIs.
-- [pyproject.toml](pyproject.toml): Minimal Python package manifest (`mcp>=1.2.0`, `pyyaml>=6.0.1`).
+- [SECURITY.md](SECURITY.md): Coordinated vulnerability disclosure policy and bounded-claims scope.
+- [CITATION.cff](CITATION.cff): Machine-readable software citation metadata anchored to ORCID and Zenodo DOIs.
+- [pyproject.toml](pyproject.toml): Minimal Python package manifest (`mcp>=1.2.0,<2.0.0`, `pyyaml>=6.0.1,<7.0.0`).
 - [profiles/banking_treasury.yaml](profiles/banking_treasury.yaml): MCP-Banking profile (ISO 20022, FedNow/RTP/CHIPS/SWIFT, Federal Reserve SR 26-2, OCC Bulletin 2026-13).
 - [profiles/energy_grid.yaml](profiles/energy_grid.yaml): MCP-Grid profile (DNP3 / IEC 61850, NERC CIP, `ARC-SPEC-2026-DPP-01`).
 - [profiles/clinical_actuation.yaml](profiles/clinical_actuation.yaml): MCP-Clinical profile (HL7 FHIR / DICOM, FDA PCCP, `ARC-SPEC-2026-DPP-01`).
 - [src/arcstone_mcp/server.py](src/arcstone_mcp/server.py): Universal FastMCP server exposing 4 Resources, 4 Tools, and 2 Prompts.
 - [src/arcstone_mcp/kernel_runner.py](src/arcstone_mcp/kernel_runner.py): Subprocess `cargo test --locked` runner, 96-byte `ExecutionPermit` simulator, TCB auditor, and ARB/ORM memo generator.
 - [src/arcstone_mcp/receipt_signer.py](src/arcstone_mcp/receipt_signer.py): Deterministic canonical SHA-256 JSON conformance receipt generator.
+- [tests/test_conformance.py](tests/test_conformance.py): Deterministic `unittest` conformance suite validating all three profiles, 96-byte permits, and TCB audit receipts.
 
 ## Upstream Canonical Anchors
 - Field Root: https://admissibilityscience.com/
