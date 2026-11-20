@@ -28,3 +28,4 @@ arcstone-mcp-bridge --profile profiles/banking_treasury.yaml
 # 3. Or launch MCP-Grid / MCP-Clinical conformance servers
 arcstone-mcp-bridge --profile profiles/energy_grid.yaml
 arcstone-mcp-bridge --profile profiles/clinical_actuation.yaml
+arcstone-mcp-bridge --profile profiles/digital_assets.yaml

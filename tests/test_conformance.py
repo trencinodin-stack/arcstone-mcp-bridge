@@ -23,6 +23,7 @@ class TestArcstoneMcpBridge(unittest.TestCase):
             "banking_treasury.yaml",
             "energy_grid.yaml",
             "clinical_actuation.yaml",
+            "digital_assets.yaml",
         ]
         for filename in profiles:
             with self.subTest(profile=filename):
@@ -85,6 +86,38 @@ class TestArcstoneMcpBridge(unittest.TestCase):
         memo = kernel_runner.generate_validation_memo(profile, "FedNow")
         self.assertIn("A-77-DELTA-SHIELD-LOCKED", memo)
         self.assertIn("FedNow", memo)
+
+
+    def test_digital_assets_psbt_rbf_retry_storm(self) -> None:
+        try:
+            from arcstone_mcp.server import _resolve_profile_path
+
+            resolved = _resolve_profile_path("digital_assets")
+            self.assertEqual(resolved.name, "digital_assets.yaml")
+        except ModuleNotFoundError:
+            self.assertTrue((ROOT / "src" / "arcstone_mcp" / "profiles" / "digital_assets.yaml").is_file())
+
+        profile = yaml.safe_load((ROOT / "profiles" / "digital_assets.yaml").read_text(encoding="utf-8"))
+        self.assertEqual(profile["profile_id"], "arcstone-digital-assets-v1")
+        vectors = profile["simulation_vectors"]
+
+        receipt = kernel_runner.simulate_permit_lifecycle(
+            profile=profile,
+            intent_payload=vectors["intent_payload"],
+            retry_payload=vectors["retry_payload"],
+            simulate_timeout=True,
+        )
+        self.assertEqual(receipt["status"], "PASS")
+        states = [t["state"] for t in receipt["details"]["cas_transitions"]]
+        self.assertEqual(
+            states,
+            [
+                "DISPATCH_RESERVED",
+                "IDEMPOTENT_REPLAY_SUPPRESSED",
+                "UNKNOWN_RECONCILE",
+                "LOCKED_MANUAL",
+            ],
+        )
 
 
 if __name__ == "__main__":

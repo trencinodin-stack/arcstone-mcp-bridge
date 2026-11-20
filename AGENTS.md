@@ -21,6 +21,7 @@
 - **`profiles/banking_treasury.yaml`:** ISO 20022 (`pacs.008`, `pacs.002`, `camt.054`), FedNow/RTP/CHIPS/SWIFT, Federal Reserve SR 26-2 / OCC Bulletin 2026-13 conformance pack.
 - **`profiles/energy_grid.yaml`:** DNP3 / IEC 61850, NERC CIP-005/007, `ARC-SPEC-2026-DPP-01` cyber-physical interlock pack.
 - **`profiles/clinical_actuation.yaml`:** HL7 FHIR R4 / DICOM RT Plan, FDA PCCP / IEC 62304 fail-closed dose envelope pack.
+- **`profiles/digital_assets.yaml`:** Bitcoin PSBT (BIP-174), EVM EIP-712/3009, HTTP x402 canonicalization, FATF Travel Rule & HSM/MPC TCB boundary pack.
 - **`src/arcstone_mcp/server.py`:** Universal FastMCP server exposing 4 Resources, 4 Tools, and 2 Prompts.
 
 ---

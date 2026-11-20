@@ -1,0 +1,138 @@
+specification: "ARC-SPEC-2026-MCP-01"
+profile_id: "arcstone-digital-assets-v1"
+profile_version: "0.2.0"
+display_name: "MCP-Digital-Assets (Bitcoin PSBT, EIP-712 & x402 Custody Conformance)"
+epistemic_anchor: "A-77-DELTA-SHIELD-LOCKED"
+
+upstream_kernel:
+  crate: "arcstone-treasury-bind"
+  version: "v0.1.0"
+  spec_doi: "10.5281/zenodo.24119501"
+  projection_spec: null
+  master_anchor: "A-77-DELTA-SHIELD-LOCKED"
+  c_ops: 0
+  m_alloc_bytes: 0
+  s_max_bytes: 4096
+
+domain_vocabulary:
+  intent_unit: "Signed Digital Asset Settlement / PSBT / Typed Payment Intent"
+  wire_formats:
+    - "Bitcoin PSBT (BIP-174)"
+    - "EVM Typed Intent (EIP-712 / EIP-3009)"
+    - "HTTP Agentic Payment (x402)"
+  volatile_retry_fields:
+    - "fee_rate_sat_vb"
+    - "n_sequence"
+    - "n_locktime"
+    - "rpc_request_id"
+    - "max_fee_per_gas"
+    - "max_priority_fee_per_gas"
+    - "rpc_timestamp"
+    - "trace_id"
+    - "http_date"
+    - "x_request_id"
+    - "retry_attempt"
+  downstream_rails:
+    - "Bitcoin Mainnet / Lightning Settlement"
+    - "EVM L1 / Rollup Custody Enclaves"
+    - "HTTP x402 Autonomous Payment Corridors"
+
+supported_rails:
+  - id: "BITCOIN_PSBT_BIP174"
+    name: "Bitcoin Partially Signed Bitcoin Transaction (BIP-174)"
+    canonical_fields:
+      - "network_magic"
+      - "inputs[].outpoint"
+      - "outputs[].script_pubkey"
+      - "outputs[].value_sats"
+    volatile_fields_stripped:
+      - "fee_rate_sat_vb"
+      - "n_sequence"
+      - "n_locktime"
+      - "rpc_request_id"
+  - id: "EVM_EIP712_SETTLEMENT"
+    name: "EVM Typed Payment Intent (EIP-712 / EIP-3009)"
+    canonical_fields:
+      - "chain_id"
+      - "verifying_contract"
+      - "recipient"
+      - "atomic_amount"
+      - "logical_intent_id"
+    volatile_fields_stripped:
+      - "max_fee_per_gas"
+      - "max_priority_fee_per_gas"
+      - "rpc_timestamp"
+      - "trace_id"
+  - id: "HTTP_X402_AGENTIC"
+    name: "HTTP 402 Autonomous Agentic Settlement"
+    canonical_fields:
+      - "payee_address"
+      - "asset_id"
+      - "amount"
+      - "resource_uri_sha256"
+    volatile_fields_stripped:
+      - "http_date"
+      - "x_request_id"
+      - "retry_attempt"
+
+invariants:
+  I1_NON_AUTHORIZATION:
+    formula: "D(a) = DENY => Delta_external(a) = 0"
+    enforcement: "Denied or unverified custody proposals produce zero UTXO lock or broadcast state mutation."
+  I2_SINGLE_COMMIT:
+    formula: "Permit(96B) = token_id(32B) || h_admitted_sha256(32B) || epoch_lease(8B) || valid_not_after_ns(8B) || mac(16B)"
+    enforcement: "RBF fee bumps and RPC timeout retries resolve to identical h_admitted_sha256 and transition to LOCKED_MANUAL (POSIX 32)."
+  I3_ZERO_AMBIENT_AUTHORITY:
+    formula: "UntrustedProducer != ProtectedResource"
+    enforcement: "Bridge holds zero private keys, seed phrases, or HSM signing credentials; strictly read-only simulation."
+
+regulatory_framework:
+  primary_guidance:
+    - "FATF Travel Rule / Sanctions Screening (TR-GATE-01)"
+    - "Qualified Custodian HSM / MPC Key Segregation (CUSTODY-TCB-02)"
+    - "SOC 2 Type II / Crypto Custody Settlement Idempotency (IDEMP-CAS-03)"
+  control_classification: "Preventive Custody Admission Control & Pre-Broadcast Idempotency Gate"
+  excluded_from_mrm_model_def: true
+
+regulatory_matrix:
+  - framework: "FATF Travel Rule / Sanctions Screening"
+    control_id: "TR-GATE-01"
+    kernel_guarantee: "Fail-closed admission gate (I1) prevents permit minting without valid beneficiary attestation digest."
+    customer_tcb: "VASP counterparty identity verification and sanctions screening provider."
+  - framework: "Qualified Custodian HSM / MPC Key Segregation"
+    control_id: "CUSTODY-TCB-02"
+    kernel_guarantee: "Zero ambient agent signing authority (I3); 96-byte ExecutionPermit MAC verification required."
+    customer_tcb: "FIPS 140-3 Level 3+ HSM or threshold MPC enclave validating permit signature before broadcast."
+  - framework: "SOC 2 Type II / Settlement Idempotency"
+    control_id: "IDEMP-CAS-03"
+    kernel_guarantee: "7-state CAS reconciliation prevents double-spend under RPC timeout or RBF retry storms (I2)."
+    customer_tcb: "Durable linearizable CAS store (PostgreSQL / Raft) persisting permit epoch leases."
+
+commercial_boundary:
+  open_evaluation: "MIT/Apache-2.0 reference predicate, Coq 8.18.0 proofs, PSBT/EIP-712/x402 canonicalization vectors"
+  enterprise_license_scope: "Production runtime profiles, FIPS 140-3 HSM/MPC enclave adapters, durable linearizable CAS persistence, VASP Travel Rule policy oracles"
+
+simulation_vectors:
+  default_scenario: "BITCOIN_PSBT_RBF_RETRY_STORM"
+  intent_payload:
+    rail: "BITCOIN_PSBT_BIP174"
+    network_magic: "mainnet"
+    inputs:
+      - outpoint: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b:0"
+    outputs:
+      - script_pubkey: "0014751e76e8199196d454941c45d1b3a323f1433bd6"
+        value_sats: 2500000
+    fee_rate_sat_vb: 18
+    n_sequence: 4294967293
+    rpc_request_id: "req-btc-001"
+  retry_payload:
+    rail: "BITCOIN_PSBT_BIP174"
+    network_magic: "mainnet"
+    inputs:
+      - outpoint: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b:0"
+    outputs:
+      - script_pubkey: "0014751e76e8199196d454941c45d1b3a323f1433bd6"
+        value_sats: 2500000
+    fee_rate_sat_vb: 42
+    n_sequence: 4294967294
+    rpc_request_id: "req-btc-002-rbf"

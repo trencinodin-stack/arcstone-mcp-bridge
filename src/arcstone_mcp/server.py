@@ -33,6 +33,10 @@ def _resolve_profile_path(raw: str | Path) -> Path:
     repo_relative = _default_root() / candidate
     if repo_relative.is_file():
         return repo_relative.resolve()
+    if not candidate.suffix:
+        yaml_bundled = _package_dir() / "profiles" / f"{candidate.name}.yaml"
+        if yaml_bundled.is_file():
+            return yaml_bundled.resolve()
     raise FileNotFoundError(f"Domain Profile Pack not found: {raw}")
 
 
